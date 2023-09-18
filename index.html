@@ -3,112 +3,108 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Styled Text Area with Line Breaks</title>
-    <!-- Include Bootstrap CSS -->
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-        }
-
-        .container {
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
-            padding: 20px;
-            text-align: center;
-        }
-
-        #text-area {
-            width: 100%;
-            height: 200px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            margin-bottom: 10px;
-        }
-
-        #result-input {
-            width: 100%;
-            height: 200px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            margin-bottom: 10px;
-        }
-
-        #copy-button {
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            padding: 10px 20px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        #copy-button:hover {
-            background-color: #0056b3;
-        }
-
-        #copy-status {
-            color: #007bff;
-            font-weight: bold;
-            display: none;
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css">
+    <title>AUTOMATE IG BOT CSV GENERATOR</title>
 </head>
 <body>
-    <div class="container">
+    <div class="container mt-5">
+        <h1 class="text-center">AUTOMATE IG</h1>
         <div class="row">
-            <div class="col-md-8 offset-md-2">
-                <h2>Styled Text Area with Line Breaks</h2>
-                <textarea id="text-area" placeholder="Enter text here..."></textarea>
-                <input type="text" id="result-input" readonly>
-                <button id="copy-button">Copy Result</button>
-                <div id="copy-status">Copied!</div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h3 class="card-title text-primary">USERS CSV GENERATOR</h3>
+                        <div class="form-group mb-3">
+                            <textarea id="inputText" class="form-control" rows="20" placeholder="Enter your data here"></textarea>
+                        </div>
+                        <div class="text-center">
+                            <button id="downloadButton" class="btn btn-primary">Download USERS CSV</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h3 class="card-title text-success">DM CSV GENERATOR</h3>
+                        <div id="inputFields">
+                            <div class="input-group mb-3">
+                                <textarea class="form-control" rows="8" placeholder="Enter text"></textarea>
+                                <div class="input-group-append">
+                                    <button class="btn btn-success add-input">+</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <a id="downloadButton2" class="btn btn-primary" href="#" download="A-IG_DM.csv">Download DM CSV</a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-    <!-- Include Bootstrap JS and jQuery -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
-        const textArea = document.getElementById('text-area');
-        const resultInput = document.getElementById('result-input');
-        const copyButton = document.getElementById('copy-button');
-        const copyStatus = document.getElementById('copy-status');
-
-        copyButton.addEventListener('click', () => {
-            resultInput.select();
-            document.execCommand('copy');
-            copyStatus.style.display = 'block';
-            setTimeout(() => {
-                copyStatus.style.display = 'none';
-            }, 1500);
+        // CSV Generator
+        document.getElementById("downloadButton").addEventListener("click", function () {
+            const inputText = document.getElementById("inputText").value;
+            const fileName = `A-IG USERS.csv`;
+            const blob = new Blob([inputText], { type: "text/csv" });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.style.display = "none";
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
         });
-
-        textArea.addEventListener('input', () => {
-            const text = textArea.value;
-            const lines = text.split('\n');
-            const modifiedText = lines.map((line, index) => {
-                if (index === 0) {
-                    return line;
-                } else {
-                    return '<br>' + line;
+        // Multi-Input Fields
+        const inputFieldsContainer = document.getElementById("inputFields");
+        const downloadButton2 = document.getElementById("downloadButton2");
+        function updateDownloadLink() {
+            const inputs = document.querySelectorAll("#inputFields textarea");
+            let concatenatedText = "";
+            inputs.forEach((input, index) => {
+                const lines = input.value.split("\n");
+                let inputText = "";
+                lines.forEach((line, lineIndex) => {
+                    if (lineIndex > 0) {
+                        inputText += "<br>";
+                    }
+                    inputText += line;
+                });
+                inputText = '"' + inputText + '"'; // Add quotation marks around the entire text
+                concatenatedText += inputText;
+                if (index < inputs.length - 1) {
+                    concatenatedText += "\n"; // Add a new line between inputs
                 }
-            }).join('');
-            resultInput.value = modifiedText;
+            });
+            const blob = new Blob([concatenatedText], { type: "text/csv" });
+            const url = URL.createObjectURL(blob);
+            downloadButton2.href = url;
+        }
+        // Add more input fields when the plus button is clicked
+        document.querySelector("#inputFields").addEventListener("click", function (e) {
+            if (e.target.classList.contains("add-input")) {
+                const newInputField = document.createElement("div");
+                newInputField.className = "form-group";
+                newInputField.innerHTML = `
+                    <textarea class="form-control" rows="8" placeholder="Enter text"></textarea>
+                    <button class="btn btn-danger remove-input">-</button>
+                `;
+                inputFieldsContainer.appendChild(newInputField);
+                updateDownloadLink();
+            }
         });
+        // Remove input fields when the minus button is clicked
+        document.querySelector("#inputFields").addEventListener("click", function (e) {
+            if (e.target.classList.contains("remove-input")) {
+                e.target.parentElement.remove();
+                updateDownloadLink();
+            }
+        });
+        // Update the download link when input fields change
+        document.querySelector("#inputFields").addEventListener("input", updateDownloadLink);
     </script>
 </body>
 </html>
